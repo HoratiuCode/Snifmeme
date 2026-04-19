@@ -67,7 +67,14 @@ let liveDexState = {
 };
 
 function setStatus(text) {
-  modelStatus.textContent = text;
+  modelStatus.dataset.message = String(text || "");
+}
+
+function setModelIndicator(isReady) {
+  const message = isReady ? "Model ready" : "Model unavailable";
+  modelStatus.dataset.state = isReady ? "ready" : "not-ready";
+  modelStatus.title = message;
+  modelStatus.setAttribute("aria-label", message);
 }
 
 function setLiveSummaryText(text) {
@@ -447,15 +454,11 @@ function renderPrediction(prediction, featureCount = 0) {
 
 function updateModelStatus() {
   if (!currentModel) {
-    setStatus("Model unavailable");
+    setModelIndicator(false);
     return;
   }
 
-  const examples = userExamples.length;
-  const trainedAt = currentModel.trainedAt
-    ? new Date(currentModel.trainedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-    : "seeded";
-  setStatus(`Ready · ${examples} learned examples · updated ${trainedAt}`);
+  setModelIndicator(true);
 }
 
 async function readFileAsText(file) {
@@ -773,5 +776,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderPrediction(lastAnalysis, Array.isArray(lastAnalysis.features) ? lastAnalysis.features.length : 21);
     await updateBadgeAndIcon(getAlertState(lastAnalysis));
   }
-  setStatus("Model ready");
+  updateModelStatus();
 });

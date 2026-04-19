@@ -60,8 +60,14 @@ body {
 .hero {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   gap: 16px;
   padding: 18px;
+}
+
+.hero-copy {
+  min-width: 0;
+  flex: 1;
 }
 
 .hero h1 {
@@ -85,6 +91,21 @@ body {
   line-height: 1.55;
 }
 
+.hero-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 132px;
+  flex: 0 0 132px;
+  text-align: center;
+}
+
+.hero-lede {
+  font-size: 11px;
+  line-height: 1.45;
+}
+
 .status-pill,
 .score-chip {
   align-self: flex-start;
@@ -96,6 +117,38 @@ body {
   background: rgba(255, 216, 77, 0.16);
   color: var(--accent);
   border: 1px solid rgba(255, 216, 77, 0.28);
+}
+
+.status-pill {
+  width: 12px;
+  height: 12px;
+  min-width: 12px;
+  padding: 0;
+  font-size: 0;
+  line-height: 0;
+  background: #ffd84d;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 0 0 4px rgba(255, 216, 77, 0.14), 0 8px 18px rgba(255, 159, 26, 0.12);
+  cursor: help;
+}
+
+.status-pill[data-state="not-ready"] {
+  background: #ef4444;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.14), 0 8px 18px rgba(239, 68, 68, 0.18);
+}
+
+.info-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 800;
+  color: #1f2937;
+  background: rgba(255, 216, 77, 0.92);
+  border: 1px solid rgba(255, 159, 26, 0.28);
+  box-shadow: 0 8px 18px rgba(255, 159, 26, 0.12);
 }
 
 .grid {
