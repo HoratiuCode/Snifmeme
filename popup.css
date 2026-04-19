@@ -99,7 +99,7 @@ body {
   width: 132px;
   flex: 0 0 132px;
   text-align: center;
-  margin-top: -2px;
+  margin-top: -8px;
 }
 
 .info-block {
@@ -108,7 +108,7 @@ body {
   align-items: center;
   gap: 1px;
   width: 180px;
-  margin-top: -2px;
+  margin-top: -6px;
 }
 
 .hero-lede {
