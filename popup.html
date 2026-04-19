@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Snif Rug Scanner</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero panel">
+        <div class="hero-copy">
+          <h1>Snif</h1>
+          <p class="lede">
+            Upload a chart screenshot and token data. The local model classifies the setup as
+            <strong>rug</strong> or <strong>safe</strong>, then learns from your labels.
+          </p>
+        </div>
+        <div class="status-pill" id="modelStatus">Model ready</div>
+      </section>
+
+      <section class="grid">
+        <div class="panel input-panel">
+          <div class="panel-header">
+            <h2>Chart</h2>
+            <button class="ghost-button" id="captureButton" type="button">Use current tab</button>
+          </div>
+
+          <label class="dropzone" id="chartDropzone" for="chartInput">
+            <input id="chartInput" type="file" accept="image/*" />
+            <span class="dropzone-title">Upload chart screenshot</span>
+            <span class="dropzone-subtitle">PNG, JPG, WebP, or a screenshot from the active tab</span>
+            <span class="file-name" id="chartFileName">No image selected</span>
+          </label>
+        </div>
+
+        <div class="panel input-panel">
+          <div class="panel-header">
+            <h2>Token data</h2>
+            <button class="ghost-button" id="loadSampleButton" type="button">Load sample</button>
+          </div>
+
+          <label class="dropzone" id="dataDropzone" for="dataInput">
+            <input id="dataInput" type="file" accept=".csv,.json,.txt" />
+            <span class="dropzone-title">Upload CSV / JSON / text</span>
+            <span class="dropzone-subtitle">Market candles, liquidity, holders, or raw notes</span>
+            <span class="file-name" id="dataFileName">No data selected</span>
+          </label>
+
+          <textarea
+            id="dataText"
+            placeholder="Paste token data here. CSV headers like time, open, high, low, close, volume, liquidity work best."
+          ></textarea>
+        </div>
+
+        <div class="panel input-panel live-panel">
+          <div class="panel-header">
+            <h2>Live DEX / contract</h2>
+            <button class="ghost-button" id="fetchDexButton" type="button">Fetch live data</button>
+          </div>
+
+          <div class="live-grid">
+            <label class="live-field live-field-wide">
+              <span>Contract or pair address</span>
+              <input
+                id="dexAddressInput"
+                type="text"
+                placeholder="0x... or a Dexscreener pair address / URL"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </label>
+
+            <label class="live-field">
+              <span>Lookup type</span>
+              <select id="dexTypeSelect">
+                <option value="token">Token contract</option>
+                <option value="pair">Pair address</option>
+              </select>
+            </label>
+
+            <label class="live-field">
+              <span>Chain id</span>
+              <input
+                id="dexChainInput"
+                type="text"
+                placeholder="ethereum, base, solana"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </label>
+          </div>
+
+          <div class="live-summary-card">
+            <div class="live-summary-head">
+              <div>
+                <p class="eyebrow">Live snapshot</p>
+                <h3 id="liveSummaryTitle">No live DEX data loaded.</h3>
+              </div>
+              <div class="live-summary-badge" id="liveSummaryBadge">Idle</div>
+            </div>
+
+            <div class="live-summary-grid" id="liveSummaryGrid">
+              <div class="live-stat">
+                <span>Price</span>
+                <strong id="liveStatPrice">n/a</strong>
+              </div>
+              <div class="live-stat">
+                <span>24h change</span>
+                <strong id="liveStatChange">n/a</strong>
+              </div>
+              <div class="live-stat">
+                <span>Liquidity</span>
+                <strong id="liveStatLiquidity">n/a</strong>
+              </div>
+              <div class="live-stat">
+                <span>Volume 24h</span>
+                <strong id="liveStatVolume">n/a</strong>
+              </div>
+              <div class="live-stat">
+                <span>FDV</span>
+                <strong id="liveStatFdv">n/a</strong>
+              </div>
+              <div class="live-stat">
+                <span>Txns</span>
+                <strong id="liveStatTxns">n/a</strong>
+              </div>
+              <div class="live-stat live-stat-wide">
+                <span>Pair address</span>
+                <strong id="liveStatPair">n/a</strong>
+              </div>
+            </div>
+
+            <p class="live-summary-note" id="liveSummaryNote">No live DEX data loaded.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel controls">
+        <button class="primary-button" id="analyzeButton" type="button">Analyze now</button>
+        <button class="secondary-button" id="clearButton" type="button">Clear inputs</button>
+        <div class="learning-row">
+          <select id="labelSelect" aria-label="Training label">
+            <option value="rug">Save as rug example</option>
+            <option value="safe">Save as safe example</option>
+          </select>
+          <button class="secondary-button" id="learnButton" type="button">Learn from result</button>
+          <button class="secondary-button" id="resetButton" type="button">Reset model</button>
+        </div>
+      </section>
+
+      <section class="panel result-panel">
+        <div class="result-head">
+          <div>
+            <p class="eyebrow">Prediction</p>
+            <h2 id="verdict">Waiting for input</h2>
+          </div>
+          <div class="score-chip" id="confidenceChip">0%</div>
+        </div>
+
+        <div class="meter">
+          <div class="meter-fill" id="confidenceFill"></div>
+        </div>
+
+        <div class="analysis-meta" id="analysisMeta">
+          Add a chart and data, then run the scan.
+        </div>
+
+        <div class="reason-list-wrap">
+          <h3>Top signals</h3>
+          <ul class="reason-list" id="reasonList"></ul>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

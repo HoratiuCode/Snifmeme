@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Snif Rug Scanner",
+  "version": "1.1.0",
+  "description": "Scans chart screenshots, uploaded market data, and live DEX/contract data to classify memecoins as rug or safe with an on-device model.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://api.dexscreener.com/*"
+  ],
+  "action": {
+    "default_title": "Snif Rug Scanner",
+    "default_popup": "popup.html"
+  }
+}
